@@ -1,7 +1,4 @@
 Config = {}
-
-Config.Framework = 'ESX' -- ESX/QB/Standalone
-
 --[[
     Things to note
     Label must be unique!
