@@ -9,7 +9,7 @@ repository   'https://github.com/baguscodestudio/bcs_radialmenu'
 description  'A radial menu for FiveM'
 
 ui_page 'web/html/index.html'
-
+shared_script {'@es_extended/imports.lua'}
 files {
     'web/html/index.html',
     'web/html/assets/*.css',
