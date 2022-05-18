@@ -1,3 +1,10 @@
+# Fork Details
+
+Fork includes removal of QBcore stuff so I can update the code to be more ESX Legacy things. It should also resolve where sometimes you dont get the job menu if u swtich job too quickly or disconnect something like that. 
+
+
+
+
 # BCS Radial Menu
 
 This project is to freshen up the options for free radial menu for FiveM. It is inspired by qb-radialmenu config and [nashvail](https://github.com/nashvail/ReactPathMenu) radial menu design.
