@@ -1,44 +1,30 @@
 local menu, PlayerData = {}, {}
 local isDead, disabled = false, false
 
-CreateThread(function()
-    if Config.Framework == 'ESX' then
-        local ESX = exports['es_extended']:getSharedObject()
-        while ESX.GetPlayerData().job == nil do
-            Wait(100)
-        end
-        PlayerData = ESX.GetPlayerData()
+RegisterNetEvent('esx:playerLoaded')
+AddEventHandler('esx:playerLoaded', function(xPlayer)
+	ESX.PlayerData = xPlayer
+	ESX.PlayerLoaded = true
+end)
 
-        RegisterNetEvent('esx:playerLoaded', function(xPlayer)
-			PlayerData = xPlayer
-		end)
+RegisterNetEvent('esx:onPlayerLogout')
+AddEventHandler('esx:onPlayerLogout', function()
+	ESX.PlayerLoaded = false
+	ESX.PlayerData = {}
+end)
 
-		RegisterNetEvent('esx:setJob', function(job)
-			PlayerData.job = job
-            removeMenu(Config.JobOption.label)
-            Wait(100)
-            AddJobMenu()
-		end)
-    elseif Config.Framework == 'QB' then
-        local QBCore = exports['qb-core']:GetCoreObject()
-		PlayerData = QBCore.Functions.GetPlayerData()
+RegisterNetEvent('esx:setJob')
+AddEventHandler('esx:setJob', function(job)
+	ESX.PlayerData.job = job
+	removeMenu(Config.JobOption.label)
+    Wait(100)
+    AddJobMenu()
+end)
 
-        RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-			PlayerData = QBCore.Functions.GetPlayerData()
-		end)
-
-        RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
-			PlayerData.job = JobInfo
-            removeMenu(Config.JobOption.label)
-            Wait(100)
-            AddJobMenu()
-		end)
-    end
-
+Citizen.CreateThread(function()
     for i=1, #Config.RadialMenu do
         menu[#menu + 1] = Config.RadialMenu[i]
     end
-
     AddJobMenu()
 end)
 
@@ -55,9 +41,7 @@ RegisterNUICallback('hideFrame', function(data,cb)
 end)
 
 RegisterNUICallback('clickedItem', function(data, cb)
-    if data.shouldClose then
-        SetNuiFocus(false, false)
-    end
+    SetNuiFocus(false, false)
     if not data.args then
         data.args = {}
     end
@@ -94,19 +78,17 @@ exports('disable', function(toggle)
 end)
 
 function AddJobMenu()
-    if (Config.Framework == 'ESX' or Config.Framework == 'QB') then
-        if PlayerData.job and Config.JobMenu[PlayerData.job.name] then
-            local joboption = {
-                label = Config.JobOption.label,
-                icon = Config.JobOption.icon,
-                submenu = {}
-            }
+    if ESX.PlayerData.job and Config.JobMenu[ESX.PlayerData.job.name] then
+        local joboption = {
+            label = Config.JobOption.label,
+            icon = Config.JobOption.icon,
+            submenu = {}
+        }
 
-            for i=1, #Config.JobMenu[PlayerData.job.name] do
-                joboption.submenu[#joboption.submenu + 1] = Config.JobMenu[PlayerData.job.name][i]
-            end
-            menu[#menu + 1] = joboption
+        for i=1, #Config.JobMenu[ESX.PlayerData.job.name] do
+            joboption.submenu[#joboption.submenu + 1] = Config.JobMenu[ESX.PlayerData.job.name][i]
         end
+        menu[#menu + 1] = joboption
     end
 end
 
